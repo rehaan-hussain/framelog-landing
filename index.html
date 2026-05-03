@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Framelog — Job Photos, Organized by Job</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0d1b2a',
+            'navy-light': '#1a2d42',
+            'navy-mid': '#162436',
+            accent: '#f97316',
+            'accent-hover': '#ea6c0a',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    .card-glow { box-shadow: 0 0 0 1px rgba(249,115,22,0.15), 0 4px 24px rgba(0,0,0,0.4); }
+    .badge { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); }
+  </style>
+</head>
+<body class="bg-navy text-white font-sans antialiased">
+
+  <!-- ───────────────────────── NAV ───────────────────────── -->
+  <nav class="sticky top-0 z-50 bg-navy/90 backdrop-blur border-b border-white/5">
+    <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+      <span class="text-xl font-black tracking-tight text-white">frame<span class="text-accent">log</span></span>
+      <a href="#pricing"
+         class="bg-accent hover:bg-accent-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition-colors">
+        Start free trial
+      </a>
+    </div>
+  </nav>
+
+  <!-- ───────────────────────── HERO ───────────────────────── -->
+  <section class="max-w-5xl mx-auto px-5 pt-20 pb-24 text-center">
+    <div class="inline-block badge text-accent text-xs font-semibold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">
+      Built for solo pros
+    </div>
+
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mb-6">
+      Your job photos.<br />
+      <span class="text-accent">Organized by job.</span>
+    </h1>
+
+    <p class="text-lg sm:text-xl text-white/60 max-w-xl mx-auto mb-10 leading-relaxed">
+      Stop digging through your camera roll. Framelog keeps every project's
+      photos separate — automatically. No albums. No manual sorting.
+      Just tap a job, see its photos.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      <a href="#pricing"
+         class="bg-accent hover:bg-accent-hover text-white font-bold text-lg px-8 py-4 rounded-2xl transition-colors">
+        Start free trial
+      </a>
+      <a href="#how-it-works"
+         class="border border-white/20 hover:border-white/40 text-white/80 font-semibold text-lg px-8 py-4 rounded-2xl transition-colors">
+        See how it works
+      </a>
+    </div>
+
+    <!-- Phone mockup -->
+    <div class="flex justify-center">
+      <div class="w-64 sm:w-72 bg-navy-light rounded-[2.5rem] border border-white/10 card-glow p-4 shadow-2xl">
+        <!-- Status bar -->
+        <div class="flex justify-between items-center px-2 mb-4 text-[10px] text-white/40 font-medium">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <!-- App header -->
+        <div class="bg-navy-mid rounded-2xl px-4 py-3 mb-3 flex items-center justify-between">
+          <span class="font-black text-white text-sm">frame<span class="text-accent">log</span></span>
+          <span class="text-accent text-xl font-light leading-none">+</span>
+        </div>
+        <!-- Job list -->
+        <div class="space-y-2">
+          <!-- Job 1 -->
+          <div class="bg-navy-mid rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-white font-semibold text-xs">Kitchen reno — Smith</span>
+              <span class="text-white/40 text-[10px]">14 photos</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div class="aspect-square bg-accent/20 rounded-lg"></div>
+              <div class="aspect-square bg-orange-400/15 rounded-lg"></div>
+              <div class="aspect-square bg-accent/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+11</div>
+            </div>
+          </div>
+          <!-- Job 2 -->
+          <div class="bg-navy-mid rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-white font-semibold text-xs">Roof repair — Jones</span>
+              <span class="text-white/40 text-[10px]">8 photos</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div class="aspect-square bg-blue-400/20 rounded-lg"></div>
+              <div class="aspect-square bg-blue-300/15 rounded-lg"></div>
+              <div class="aspect-square bg-blue-400/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+5</div>
+            </div>
+          </div>
+          <!-- Job 3 -->
+          <div class="bg-navy-mid rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-white font-semibold text-xs">Bathroom tile — Lee</span>
+              <span class="text-white/40 text-[10px]">22 photos</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div class="aspect-square bg-emerald-400/20 rounded-lg"></div>
+              <div class="aspect-square bg-emerald-300/15 rounded-lg"></div>
+              <div class="aspect-square bg-emerald-400/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+19</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── PROBLEM ───────────────────────── -->
+  <section class="bg-navy-light border-y border-white/5 py-24">
+    <div class="max-w-3xl mx-auto px-5 text-center">
+      <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-8">
+        Your camera roll is a mess.<br />
+        <span class="text-white/40">And you know it.</span>
+      </h2>
+      <p class="text-white/60 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+        You've got 3,000 photos. Some are jobs. Some are personal. Some are both.
+        When a client asks for proof of work, you're scrolling back three weeks
+        hoping you remember which ones were theirs.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-4 text-left">
+        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
+          <span class="text-2xl mb-3 block">❌</span>
+          <p class="text-white/70 font-medium">Camera roll mixed with family photos</p>
+        </div>
+        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
+          <span class="text-2xl mb-3 block">❌</span>
+          <p class="text-white/70 font-medium">No way to group photos by job</p>
+        </div>
+        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
+          <span class="text-2xl mb-3 block">❌</span>
+          <p class="text-white/70 font-medium">Sharing means exposing your whole library</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SOLUTION ───────────────────────── -->
+  <section id="how-it-works" class="py-24 max-w-5xl mx-auto px-5">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl sm:text-5xl font-black leading-tight">
+        Framelog keeps work photos<br />
+        <span class="text-accent">where they belong — in the job.</span>
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-6">
+      <!-- Card 1 -->
+      <div class="bg-navy-light rounded-3xl p-7 border border-white/5 card-glow">
+        <div class="text-4xl mb-5">📁</div>
+        <h3 class="text-xl font-bold mb-3">Open a job, see its photos</h3>
+        <p class="text-white/50 leading-relaxed">Every project has its own space. Nothing spills over.</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="bg-navy-light rounded-3xl p-7 border border-accent/20 card-glow ring-1 ring-accent/20">
+        <div class="text-4xl mb-5">📷</div>
+        <h3 class="text-xl font-bold mb-3">In-app camera</h3>
+        <p class="text-white/50 leading-relaxed">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="bg-navy-light rounded-3xl p-7 border border-white/5 card-glow">
+        <div class="text-4xl mb-5">💻</div>
+        <h3 class="text-xl font-bold mb-3">Access from any device</h3>
+        <p class="text-white/50 leading-relaxed">Log in on your phone or browser. Your jobs follow you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SOCIAL PROOF ───────────────────────── -->
+  <section class="bg-navy-light border-y border-white/5 py-24">
+    <div class="max-w-5xl mx-auto px-5">
+      <h2 class="text-3xl sm:text-4xl font-black text-center mb-14">What solo pros are saying</h2>
+      <div class="grid sm:grid-cols-3 gap-6">
+
+        <!-- Testimonial 1 -->
+        <div class="bg-navy rounded-3xl p-7 border border-white/5">
+          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
+          <p class="text-white/70 leading-relaxed mb-6">
+            "I used to dread sending photos to clients. Now I just open the job and hit share. Done."
+          </p>
+          <div>
+            <p class="font-semibold text-white">Marcus T.</p>
+            <p class="text-white/40 text-sm">Electrician · Dubai</p>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 — placeholder -->
+        <div class="bg-navy rounded-3xl p-7 border border-white/5">
+          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
+          <p class="text-white/70 leading-relaxed mb-6">
+            [QUOTE HERE — focus on time saved or client confidence in a specific situation]
+          </p>
+          <div>
+            <p class="font-semibold text-white">[Name]</p>
+            <p class="text-white/40 text-sm">[Trade] · [City]</p>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 — placeholder -->
+        <div class="bg-navy rounded-3xl p-7 border border-white/5">
+          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
+          <p class="text-white/70 leading-relaxed mb-6">
+            [QUOTE HERE — focus on time saved or client confidence in a specific situation]
+          </p>
+          <div>
+            <p class="font-semibold text-white">[Name]</p>
+            <p class="text-white/40 text-sm">[Trade] · [City]</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── PRICING ───────────────────────── -->
+  <section id="pricing" class="py-24 max-w-4xl mx-auto px-5 text-center">
+    <h2 class="text-4xl sm:text-5xl font-black mb-4">Less than one coffee a month.</h2>
+    <p class="text-white/50 text-lg mb-14">One user. Unlimited jobs. Cancel anytime.</p>
+
+    <div class="grid sm:grid-cols-2 gap-6 mb-10">
+      <!-- Monthly -->
+      <div class="bg-navy-light rounded-3xl p-8 border border-white/10 text-left">
+        <p class="text-white/40 font-semibold uppercase tracking-widest text-xs mb-4">Monthly</p>
+        <p class="text-5xl font-black text-white mb-1">$X<span class="text-xl font-normal text-white/40"> / mo</span></p>
+        <p class="text-white/40 text-sm mb-8">Billed monthly</p>
+        <ul class="space-y-3 text-white/70 text-sm mb-8">
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Unlimited jobs</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> In-app camera</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Browser access</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Share jobs with clients</li>
+        </ul>
+        <a href="#"
+           class="block text-center border border-white/20 hover:border-white/40 text-white font-semibold py-3 rounded-2xl transition-colors">
+          Start free trial
+        </a>
+      </div>
+
+      <!-- Annual -->
+      <div class="bg-navy-light rounded-3xl p-8 border border-accent/30 text-left ring-2 ring-accent/20 relative overflow-hidden">
+        <div class="absolute top-4 right-4 badge text-accent text-xs font-bold px-3 py-1 rounded-full">
+          SAVE 30%
+        </div>
+        <p class="text-accent font-semibold uppercase tracking-widest text-xs mb-4">Annual</p>
+        <p class="text-5xl font-black text-white mb-1">$X<span class="text-xl font-normal text-white/40"> / yr</span></p>
+        <p class="text-white/40 text-sm mb-8">Billed once a year</p>
+        <ul class="space-y-3 text-white/70 text-sm mb-8">
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Unlimited jobs</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> In-app camera</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Browser access</li>
+          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Share jobs with clients</li>
+        </ul>
+        <a href="#"
+           class="block text-center bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded-2xl transition-colors">
+          Start free trial
+        </a>
+      </div>
+    </div>
+
+    <p class="text-white/40 text-sm">
+      Not ready? Start with a <strong class="text-white/60">7-day free trial</strong>. No card required.
+    </p>
+  </section>
+
+  <!-- ───────────────────────── FINAL CTA ───────────────────────── -->
+  <section class="bg-navy-light border-t border-white/5 py-24 text-center">
+    <div class="max-w-2xl mx-auto px-5">
+      <h2 class="text-4xl sm:text-5xl font-black mb-6">
+        Get your photos under control<br />
+        <span class="text-accent">— today.</span>
+      </h2>
+      <p class="text-white/50 text-lg mb-10 leading-relaxed">
+        Takes 2 minutes to set up. No camera roll access needed. Start with one job.
+      </p>
+      <a href="#"
+         class="inline-block bg-accent hover:bg-accent-hover text-white font-black text-xl px-10 py-5 rounded-2xl transition-colors shadow-lg shadow-accent/20">
+        Download free on the App Store
+      </a>
+      <p class="text-white/30 text-sm mt-6">
+        Used by solo contractors, consultants, and field workers.<br />Built for one. Priced for one.
+      </p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── FOOTER ───────────────────────── -->
+  <footer class="border-t border-white/5 py-8 text-center text-white/20 text-sm">
+    <div class="max-w-5xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span class="font-black text-white/40">frame<span class="text-accent/60">log</span></span>
+      <span>© 2026 Framelog. All rights reserved.</span>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-white/40 transition-colors">Privacy</a>
+        <a href="#" class="hover:text-white/40 transition-colors">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
