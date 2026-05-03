@@ -10,117 +10,231 @@
       theme: {
         extend: {
           colors: {
-            navy: '#0d1b2a',
-            'navy-light': '#1a2d42',
-            'navy-mid': '#162436',
-            accent: '#f97316',
-            'accent-hover': '#ea6c0a',
+            cream:  '#F7F6F2',
+            paper:  '#FFFFFF',
+            ink:    '#0F0F0F',
+            muted:  '#888888',
+            border: '#E4E3DD',
+            soft:   '#EFEFEB',
+            accent: '#F97316',
           },
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          keyframes: {
+            'fade-up': {
+              '0%':   { opacity: '0', transform: 'translateY(28px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            'fade-in': {
+              '0%':   { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            ticker: {
+              '0%':   { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%':       { opacity: '0' },
+            },
+            pulse2: {
+              '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+              '50%':      { transform: 'scale(1.04)', opacity: '0.85' },
+            },
+          },
+          animation: {
+            'fade-up':  'fade-up 0.6s cubic-bezier(0.16,1,0.3,1) forwards',
+            'fade-in':  'fade-in 0.5s ease forwards',
+            ticker:     'ticker 22s linear infinite',
+            blink:      'blink 1.1s step-end infinite',
+            pulse2:     'pulse2 2.4s ease-in-out infinite',
           },
         }
       }
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+
   <style>
-    html { scroll-behavior: smooth; }
-    .card-glow { box-shadow: 0 0 0 1px rgba(249,115,22,0.15), 0 4px 24px rgba(0,0,0,0.4); }
-    .badge { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* Scroll-reveal utility */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Stagger children */
+    .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0ms; }
+    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:90ms; }
+    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:180ms; }
+    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:270ms; }
+
+    /* Card hover lift */
+    .card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .card-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+
+    /* Ticker tape */
+    .ticker-wrap { overflow: hidden; white-space: nowrap; }
+    .ticker-inner { display: inline-flex; animation: ticker 22s linear infinite; }
+    .ticker-inner:hover { animation-play-state: paused; }
+
+    /* Phone mockup photo grid pulse */
+    .photo-thumb { animation: pulse2 2.4s ease-in-out infinite; }
+    .photo-thumb:nth-child(2) { animation-delay: 0.3s; }
+    .photo-thumb:nth-child(3) { animation-delay: 0.6s; }
+
+    /* Underline draw on hero */
+    .underline-draw { position: relative; display: inline-block; }
+    .underline-draw::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 3px;
+      background: #F97316;
+      animation: draw-line 1s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes draw-line { to { width: 100%; } }
+
+    /* CTA button shimmer */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      background: #0F0F0F;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #2a2a2a; }
+
+    /* Subtle border on inputs */
+    input:focus { outline: 2px solid #0F0F0F; outline-offset: 2px; }
   </style>
 </head>
-<body class="bg-navy text-white font-sans antialiased">
 
-  <!-- ───────────────────────── NAV ───────────────────────── -->
-  <nav class="sticky top-0 z-50 bg-navy/90 backdrop-blur border-b border-white/5">
-    <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-      <span class="text-xl font-black tracking-tight text-white">frame<span class="text-accent">log</span></span>
-      <a href="#pricing"
-         class="bg-accent hover:bg-accent-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition-colors">
-        Start free trial
-      </a>
+<body class="bg-cream text-ink font-sans antialiased">
+
+  <!-- ── NAV ── -->
+  <nav class="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <span class="text-lg font-black tracking-tight">
+        frame<span class="text-accent">log</span>
+      </span>
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline text-xs font-semibold bg-ink text-cream px-3 py-1 rounded-full tracking-widest uppercase">
+          Coming soon
+        </span>
+        <a href="#waitlist"
+           class="btn-primary text-sm font-semibold px-5 py-2 rounded-full">
+          Join waitlist
+        </a>
+      </div>
     </div>
   </nav>
 
-  <!-- ───────────────────────── HERO ───────────────────────── -->
-  <section class="max-w-5xl mx-auto px-5 pt-20 pb-24 text-center">
-    <div class="inline-block badge text-accent text-xs font-semibold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">
-      Built for solo pros
-    </div>
+  <!-- ── HERO ── -->
+  <section class="max-w-5xl mx-auto px-6 pt-24 pb-20">
+    <div class="max-w-3xl">
 
-    <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mb-6">
-      Your job photos.<br />
-      <span class="text-accent">Organized by job.</span>
-    </h1>
+      <div class="reveal mb-6">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold text-muted border border-border bg-paper px-3 py-1.5 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
+          iOS app · launching soon
+        </span>
+      </div>
 
-    <p class="text-lg sm:text-xl text-white/60 max-w-xl mx-auto mb-10 leading-relaxed">
-      Stop digging through your camera roll. Framelog keeps every project's
-      photos separate — automatically. No albums. No manual sorting.
-      Just tap a job, see its photos.
-    </p>
+      <h1 class="reveal text-6xl sm:text-7xl md:text-8xl font-black leading-[0.95] tracking-tighter mb-8" style="transition-delay:80ms">
+        Your job photos.<br />
+        <span class="underline-draw">Organized by job.</span>
+      </h1>
 
-    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-      <a href="#pricing"
-         class="bg-accent hover:bg-accent-hover text-white font-bold text-lg px-8 py-4 rounded-2xl transition-colors">
-        Start free trial
-      </a>
-      <a href="#how-it-works"
-         class="border border-white/20 hover:border-white/40 text-white/80 font-semibold text-lg px-8 py-4 rounded-2xl transition-colors">
-        See how it works
-      </a>
+      <p class="reveal text-xl text-muted leading-relaxed max-w-lg mb-10" style="transition-delay:160ms">
+        Stop digging through your camera roll. Framelog keeps every project's
+        photos separate — automatically. No albums. No manual sorting.
+        Just tap a job, see its photos.
+      </p>
+
+      <div class="reveal flex flex-col sm:flex-row gap-3" style="transition-delay:240ms">
+        <a href="#waitlist"
+           class="btn-primary font-bold text-base px-8 py-4 rounded-2xl inline-block text-center">
+          Join the waitlist
+        </a>
+        <a href="#how-it-works"
+           class="border border-border bg-paper hover:bg-soft text-ink font-semibold text-base px-8 py-4 rounded-2xl transition-colors text-center">
+          See how it works ↓
+        </a>
+      </div>
     </div>
 
     <!-- Phone mockup -->
-    <div class="flex justify-center">
-      <div class="w-64 sm:w-72 bg-navy-light rounded-[2.5rem] border border-white/10 card-glow p-4 shadow-2xl">
-        <!-- Status bar -->
-        <div class="flex justify-between items-center px-2 mb-4 text-[10px] text-white/40 font-medium">
-          <span>9:41</span>
-          <span>●●●</span>
-        </div>
-        <!-- App header -->
-        <div class="bg-navy-mid rounded-2xl px-4 py-3 mb-3 flex items-center justify-between">
-          <span class="font-black text-white text-sm">frame<span class="text-accent">log</span></span>
-          <span class="text-accent text-xl font-light leading-none">+</span>
-        </div>
-        <!-- Job list -->
-        <div class="space-y-2">
-          <!-- Job 1 -->
-          <div class="bg-navy-mid rounded-2xl p-3">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-white font-semibold text-xs">Kitchen reno — Smith</span>
-              <span class="text-white/40 text-[10px]">14 photos</span>
-            </div>
-            <div class="grid grid-cols-3 gap-1">
-              <div class="aspect-square bg-accent/20 rounded-lg"></div>
-              <div class="aspect-square bg-orange-400/15 rounded-lg"></div>
-              <div class="aspect-square bg-accent/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+11</div>
-            </div>
-          </div>
-          <!-- Job 2 -->
-          <div class="bg-navy-mid rounded-2xl p-3">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-white font-semibold text-xs">Roof repair — Jones</span>
-              <span class="text-white/40 text-[10px]">8 photos</span>
-            </div>
-            <div class="grid grid-cols-3 gap-1">
-              <div class="aspect-square bg-blue-400/20 rounded-lg"></div>
-              <div class="aspect-square bg-blue-300/15 rounded-lg"></div>
-              <div class="aspect-square bg-blue-400/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+5</div>
-            </div>
-          </div>
-          <!-- Job 3 -->
-          <div class="bg-navy-mid rounded-2xl p-3">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-white font-semibold text-xs">Bathroom tile — Lee</span>
-              <span class="text-white/40 text-[10px]">22 photos</span>
-            </div>
-            <div class="grid grid-cols-3 gap-1">
-              <div class="aspect-square bg-emerald-400/20 rounded-lg"></div>
-              <div class="aspect-square bg-emerald-300/15 rounded-lg"></div>
-              <div class="aspect-square bg-emerald-400/10 rounded-lg flex items-center justify-center text-white/30 text-xs">+19</div>
+    <div class="reveal mt-20" style="transition-delay:320ms">
+      <div class="flex justify-start">
+        <div class="relative">
+          <!-- Glow backdrop -->
+          <div class="absolute -inset-6 bg-accent/5 rounded-[4rem] blur-2xl"></div>
+          <!-- Device -->
+          <div class="relative w-64 sm:w-72 bg-ink rounded-[2.8rem] border-4 border-ink shadow-2xl overflow-hidden">
+            <!-- Screen -->
+            <div class="bg-[#161616] px-4 pt-6 pb-6">
+              <!-- Notch -->
+              <div class="flex justify-center mb-4">
+                <div class="w-20 h-5 bg-ink rounded-full"></div>
+              </div>
+              <!-- App bar -->
+              <div class="flex items-center justify-between mb-5">
+                <span class="text-white font-black text-sm">frame<span class="text-accent">log</span></span>
+                <button class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white text-lg font-light leading-none">+</button>
+              </div>
+              <!-- Job cards -->
+              <div class="space-y-3">
+                <!-- Job 1 — active -->
+                <div class="bg-[#1F1F1F] rounded-2xl p-3">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-white text-xs font-semibold">Kitchen reno — Smith</span>
+                    <span class="text-white/30 text-[10px]">14 photos</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1.5">
+                    <div class="photo-thumb aspect-square rounded-xl bg-amber-700/40"></div>
+                    <div class="photo-thumb aspect-square rounded-xl bg-amber-600/30"></div>
+                    <div class="photo-thumb aspect-square rounded-xl bg-amber-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+11</div>
+                  </div>
+                </div>
+                <!-- Job 2 -->
+                <div class="bg-[#1F1F1F] rounded-2xl p-3">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-white text-xs font-semibold">Roof repair — Jones</span>
+                    <span class="text-white/30 text-[10px]">8 photos</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1.5">
+                    <div class="aspect-square rounded-xl bg-sky-700/40"></div>
+                    <div class="aspect-square rounded-xl bg-sky-600/30"></div>
+                    <div class="aspect-square rounded-xl bg-sky-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+5</div>
+                  </div>
+                </div>
+                <!-- Job 3 -->
+                <div class="bg-[#1F1F1F] rounded-2xl p-3">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-white text-xs font-semibold">Bathroom tile — Lee</span>
+                    <span class="text-white/30 text-[10px]">22 photos</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1.5">
+                    <div class="aspect-square rounded-xl bg-emerald-700/40"></div>
+                    <div class="aspect-square rounded-xl bg-emerald-600/30"></div>
+                    <div class="aspect-square rounded-xl bg-emerald-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+19</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Bottom bar -->
+              <div class="mt-5 flex justify-center">
+                <div class="w-24 h-1 bg-white/20 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -128,192 +242,286 @@
     </div>
   </section>
 
-  <!-- ───────────────────────── PROBLEM ───────────────────────── -->
-  <section class="bg-navy-light border-y border-white/5 py-24">
-    <div class="max-w-3xl mx-auto px-5 text-center">
-      <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-8">
-        Your camera roll is a mess.<br />
-        <span class="text-white/40">And you know it.</span>
+  <!-- ── TICKER ── -->
+  <div class="border-y border-border bg-paper py-4 overflow-hidden">
+    <div class="ticker-wrap">
+      <div class="ticker-inner">
+        <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Access from any device</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
+        <span class="text-accent px-2">·</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Access from any device</span>
+        <span class="text-accent px-2">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
+        <span class="text-accent px-2">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROBLEM ── -->
+  <section class="max-w-5xl mx-auto px-6 py-28">
+    <div class="max-w-2xl">
+      <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">The problem</p>
+      <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight mb-8" style="transition-delay:80ms">
+        Your camera roll is a mess.
+        <span class="text-muted"> And you know it.</span>
       </h2>
-      <p class="text-white/60 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+      <p class="reveal text-lg text-muted leading-relaxed" style="transition-delay:160ms">
         You've got 3,000 photos. Some are jobs. Some are personal. Some are both.
         When a client asks for proof of work, you're scrolling back three weeks
         hoping you remember which ones were theirs.
       </p>
-      <div class="grid sm:grid-cols-3 gap-4 text-left">
-        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
-          <span class="text-2xl mb-3 block">❌</span>
-          <p class="text-white/70 font-medium">Camera roll mixed with family photos</p>
+    </div>
+
+    <div class="stagger grid sm:grid-cols-3 gap-4 mt-16">
+      <div class="card-lift bg-paper border border-border rounded-3xl p-7">
+        <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">📱</div>
+        <p class="font-semibold text-ink mb-2">Camera roll chaos</p>
+        <p class="text-muted text-sm leading-relaxed">Work and personal photos mixed together with no separation.</p>
+      </div>
+      <div class="card-lift bg-paper border border-border rounded-3xl p-7">
+        <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">🔍</div>
+        <p class="font-semibold text-ink mb-2">No job grouping</p>
+        <p class="text-muted text-sm leading-relaxed">No way to group photos by client or project — only by date.</p>
+      </div>
+      <div class="card-lift bg-paper border border-border rounded-3xl p-7">
+        <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">👁</div>
+        <p class="font-semibold text-ink mb-2">Privacy at risk</p>
+        <p class="text-muted text-sm leading-relaxed">Sharing one photo means exposing your entire library.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SOLUTION ── -->
+  <section id="how-it-works" class="bg-paper border-y border-border py-28">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="max-w-2xl mb-16">
+        <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">The fix</p>
+        <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight" style="transition-delay:80ms">
+          Framelog keeps work photos
+          <span class="text-accent"> where they belong — in the job.</span>
+        </h2>
+      </div>
+
+      <div class="stagger grid sm:grid-cols-3 gap-4">
+        <!-- Feature 1 -->
+        <div class="card-lift border border-border rounded-3xl p-8">
+          <div class="text-4xl mb-6">📁</div>
+          <h3 class="text-xl font-bold mb-3 tracking-tight">Open a job, see its photos</h3>
+          <p class="text-muted leading-relaxed text-sm">Every project has its own space. Nothing spills over.</p>
         </div>
-        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
-          <span class="text-2xl mb-3 block">❌</span>
-          <p class="text-white/70 font-medium">No way to group photos by job</p>
+        <!-- Feature 2 — highlighted -->
+        <div class="card-lift border-2 border-ink rounded-3xl p-8 bg-ink text-paper">
+          <div class="text-4xl mb-6">📷</div>
+          <h3 class="text-xl font-bold mb-3 tracking-tight">In-app camera</h3>
+          <p class="text-paper/50 leading-relaxed text-sm">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
         </div>
-        <div class="bg-navy rounded-2xl p-5 border border-red-500/10">
-          <span class="text-2xl mb-3 block">❌</span>
-          <p class="text-white/70 font-medium">Sharing means exposing your whole library</p>
+        <!-- Feature 3 -->
+        <div class="card-lift border border-border rounded-3xl p-8">
+          <div class="text-4xl mb-6">💻</div>
+          <h3 class="text-xl font-bold mb-3 tracking-tight">Access from any device</h3>
+          <p class="text-muted leading-relaxed text-sm">Log in on your phone or browser. Your jobs follow you.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ───────────────────────── SOLUTION ───────────────────────── -->
-  <section id="how-it-works" class="py-24 max-w-5xl mx-auto px-5">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl sm:text-5xl font-black leading-tight">
-        Framelog keeps work photos<br />
-        <span class="text-accent">where they belong — in the job.</span>
-      </h2>
-    </div>
+  <!-- ── SOCIAL PROOF ── -->
+  <section class="max-w-5xl mx-auto px-6 py-28">
+    <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">What they're saying</p>
+    <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight mb-16" style="transition-delay:80ms">
+      Real feedback from solo pros.
+    </h2>
 
-    <div class="grid sm:grid-cols-3 gap-6">
-      <!-- Card 1 -->
-      <div class="bg-navy-light rounded-3xl p-7 border border-white/5 card-glow">
-        <div class="text-4xl mb-5">📁</div>
-        <h3 class="text-xl font-bold mb-3">Open a job, see its photos</h3>
-        <p class="text-white/50 leading-relaxed">Every project has its own space. Nothing spills over.</p>
-      </div>
-      <!-- Card 2 -->
-      <div class="bg-navy-light rounded-3xl p-7 border border-accent/20 card-glow ring-1 ring-accent/20">
-        <div class="text-4xl mb-5">📷</div>
-        <h3 class="text-xl font-bold mb-3">In-app camera</h3>
-        <p class="text-white/50 leading-relaxed">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
-      </div>
-      <!-- Card 3 -->
-      <div class="bg-navy-light rounded-3xl p-7 border border-white/5 card-glow">
-        <div class="text-4xl mb-5">💻</div>
-        <h3 class="text-xl font-bold mb-3">Access from any device</h3>
-        <p class="text-white/50 leading-relaxed">Log in on your phone or browser. Your jobs follow you.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── SOCIAL PROOF ───────────────────────── -->
-  <section class="bg-navy-light border-y border-white/5 py-24">
-    <div class="max-w-5xl mx-auto px-5">
-      <h2 class="text-3xl sm:text-4xl font-black text-center mb-14">What solo pros are saying</h2>
-      <div class="grid sm:grid-cols-3 gap-6">
-
-        <!-- Testimonial 1 -->
-        <div class="bg-navy rounded-3xl p-7 border border-white/5">
-          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
-          <p class="text-white/70 leading-relaxed mb-6">
+    <div class="stagger grid sm:grid-cols-3 gap-4">
+      <!-- Testimonial 1 -->
+      <div class="card-lift bg-paper border border-border rounded-3xl p-8 flex flex-col justify-between">
+        <div>
+          <div class="flex gap-0.5 mb-5 text-accent text-sm">★★★★★</div>
+          <p class="text-ink text-base leading-relaxed mb-6">
             "I used to dread sending photos to clients. Now I just open the job and hit share. Done."
           </p>
+        </div>
+        <div class="flex items-center gap-3 pt-5 border-t border-border">
+          <div class="w-9 h-9 rounded-full bg-soft flex items-center justify-center text-sm font-bold text-muted">MT</div>
           <div>
-            <p class="font-semibold text-white">Marcus T.</p>
-            <p class="text-white/40 text-sm">Electrician · Dubai</p>
+            <p class="text-sm font-semibold text-ink">Marcus T.</p>
+            <p class="text-xs text-muted">Electrician · Dubai</p>
           </div>
         </div>
+      </div>
 
-        <!-- Testimonial 2 — placeholder -->
-        <div class="bg-navy rounded-3xl p-7 border border-white/5">
-          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
-          <p class="text-white/70 leading-relaxed mb-6">
+      <!-- Testimonial 2 — placeholder -->
+      <div class="card-lift bg-soft border border-border rounded-3xl p-8 flex flex-col justify-between">
+        <div>
+          <div class="flex gap-0.5 mb-5 text-muted text-sm">★★★★★</div>
+          <p class="text-muted text-base leading-relaxed mb-6 italic">
             [QUOTE HERE — focus on time saved or client confidence in a specific situation]
           </p>
+        </div>
+        <div class="flex items-center gap-3 pt-5 border-t border-border">
+          <div class="w-9 h-9 rounded-full bg-border flex items-center justify-center text-sm font-bold text-muted">?</div>
           <div>
-            <p class="font-semibold text-white">[Name]</p>
-            <p class="text-white/40 text-sm">[Trade] · [City]</p>
+            <p class="text-sm font-semibold text-muted">[Name]</p>
+            <p class="text-xs text-muted">[Trade] · [City]</p>
           </div>
         </div>
+      </div>
 
-        <!-- Testimonial 3 — placeholder -->
-        <div class="bg-navy rounded-3xl p-7 border border-white/5">
-          <div class="flex gap-1 mb-4 text-accent text-sm">★★★★★</div>
-          <p class="text-white/70 leading-relaxed mb-6">
+      <!-- Testimonial 3 — placeholder -->
+      <div class="card-lift bg-soft border border-border rounded-3xl p-8 flex flex-col justify-between">
+        <div>
+          <div class="flex gap-0.5 mb-5 text-muted text-sm">★★★★★</div>
+          <p class="text-muted text-base leading-relaxed mb-6 italic">
             [QUOTE HERE — focus on time saved or client confidence in a specific situation]
           </p>
+        </div>
+        <div class="flex items-center gap-3 pt-5 border-t border-border">
+          <div class="w-9 h-9 rounded-full bg-border flex items-center justify-center text-sm font-bold text-muted">?</div>
           <div>
-            <p class="font-semibold text-white">[Name]</p>
-            <p class="text-white/40 text-sm">[Trade] · [City]</p>
+            <p class="text-sm font-semibold text-muted">[Name]</p>
+            <p class="text-xs text-muted">[Trade] · [City]</p>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ───────────────────────── PRICING ───────────────────────── -->
-  <section id="pricing" class="py-24 max-w-4xl mx-auto px-5 text-center">
-    <h2 class="text-4xl sm:text-5xl font-black mb-4">Less than one coffee a month.</h2>
-    <p class="text-white/50 text-lg mb-14">One user. Unlimited jobs. Cancel anytime.</p>
-
-    <div class="grid sm:grid-cols-2 gap-6 mb-10">
-      <!-- Monthly -->
-      <div class="bg-navy-light rounded-3xl p-8 border border-white/10 text-left">
-        <p class="text-white/40 font-semibold uppercase tracking-widest text-xs mb-4">Monthly</p>
-        <p class="text-5xl font-black text-white mb-1">$X<span class="text-xl font-normal text-white/40"> / mo</span></p>
-        <p class="text-white/40 text-sm mb-8">Billed monthly</p>
-        <ul class="space-y-3 text-white/70 text-sm mb-8">
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Unlimited jobs</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> In-app camera</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Browser access</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Share jobs with clients</li>
-        </ul>
-        <a href="#"
-           class="block text-center border border-white/20 hover:border-white/40 text-white font-semibold py-3 rounded-2xl transition-colors">
-          Start free trial
-        </a>
+  <!-- ── WAITLIST (replaces pricing) ── -->
+  <section id="waitlist" class="bg-ink text-paper border-y border-ink py-28">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <div class="reveal mb-6">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold text-paper/40 border border-white/10 px-3 py-1.5 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
+          Launching soon on iOS
+        </span>
       </div>
 
-      <!-- Annual -->
-      <div class="bg-navy-light rounded-3xl p-8 border border-accent/30 text-left ring-2 ring-accent/20 relative overflow-hidden">
-        <div class="absolute top-4 right-4 badge text-accent text-xs font-bold px-3 py-1 rounded-full">
-          SAVE 30%
-        </div>
-        <p class="text-accent font-semibold uppercase tracking-widest text-xs mb-4">Annual</p>
-        <p class="text-5xl font-black text-white mb-1">$X<span class="text-xl font-normal text-white/40"> / yr</span></p>
-        <p class="text-white/40 text-sm mb-8">Billed once a year</p>
-        <ul class="space-y-3 text-white/70 text-sm mb-8">
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Unlimited jobs</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> In-app camera</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Browser access</li>
-          <li class="flex items-center gap-2"><span class="text-accent">✓</span> Share jobs with clients</li>
-        </ul>
-        <a href="#"
-           class="block text-center bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded-2xl transition-colors">
-          Start free trial
-        </a>
-      </div>
-    </div>
-
-    <p class="text-white/40 text-sm">
-      Not ready? Start with a <strong class="text-white/60">7-day free trial</strong>. No card required.
-    </p>
-  </section>
-
-  <!-- ───────────────────────── FINAL CTA ───────────────────────── -->
-  <section class="bg-navy-light border-t border-white/5 py-24 text-center">
-    <div class="max-w-2xl mx-auto px-5">
-      <h2 class="text-4xl sm:text-5xl font-black mb-6">
-        Get your photos under control<br />
-        <span class="text-accent">— today.</span>
+      <h2 class="reveal text-5xl sm:text-6xl font-black tracking-tight leading-tight mb-5" style="transition-delay:80ms">
+        Be first to know<br />when we launch.
       </h2>
-      <p class="text-white/50 text-lg mb-10 leading-relaxed">
-        Takes 2 minutes to set up. No camera roll access needed. Start with one job.
+      <p class="reveal text-paper/50 text-lg leading-relaxed mb-12" style="transition-delay:160ms">
+        No pricing. No tiers. One plan, one user, unlimited jobs.<br />
+        We'll email you the moment Framelog hits the App Store.
       </p>
-      <a href="#"
-         class="inline-block bg-accent hover:bg-accent-hover text-white font-black text-xl px-10 py-5 rounded-2xl transition-colors shadow-lg shadow-accent/20">
+
+      <!-- Email form -->
+      <form class="reveal" style="transition-delay:240ms" onsubmit="handleSubmit(event)">
+        <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input
+            type="email"
+            id="email-input"
+            required
+            placeholder="your@email.com"
+            class="flex-1 bg-white/5 border border-white/10 text-paper placeholder-paper/30 rounded-2xl px-5 py-4 text-base font-medium"
+          />
+          <button
+            type="submit"
+            class="bg-accent hover:bg-orange-600 text-white font-bold px-7 py-4 rounded-2xl transition-colors whitespace-nowrap"
+          >
+            Notify me
+          </button>
+        </div>
+        <p id="form-success" class="hidden text-accent text-sm font-semibold mt-4">
+          ✓ You're on the list. We'll be in touch soon.
+        </p>
+      </form>
+
+      <p class="reveal text-paper/25 text-xs mt-8" style="transition-delay:320ms">
+        No spam. No card required. Unsubscribe anytime.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ── -->
+  <section class="max-w-5xl mx-auto px-6 py-28 text-center">
+    <h2 class="reveal text-5xl sm:text-6xl font-black tracking-tight leading-tight mb-6">
+      Get your photos under control<br />
+      <span class="text-accent">— today.</span>
+    </h2>
+    <p class="reveal text-lg text-muted leading-relaxed mb-10 max-w-md mx-auto" style="transition-delay:80ms">
+      Takes 2 minutes to set up. No camera roll access needed. Start with one job.
+    </p>
+    <div class="reveal" style="transition-delay:160ms">
+      <a href="#waitlist"
+         class="btn-primary inline-block font-bold text-lg px-10 py-5 rounded-2xl">
         Download free on the App Store
       </a>
-      <p class="text-white/30 text-sm mt-6">
-        Used by solo contractors, consultants, and field workers.<br />Built for one. Priced for one.
+      <p class="text-muted text-sm mt-6">
+        Used by solo contractors, consultants, and field workers.<br />
+        Built for one. Priced for one.
       </p>
     </div>
   </section>
 
-  <!-- ───────────────────────── FOOTER ───────────────────────── -->
-  <footer class="border-t border-white/5 py-8 text-center text-white/20 text-sm">
-    <div class="max-w-5xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <span class="font-black text-white/40">frame<span class="text-accent/60">log</span></span>
+  <!-- ── FOOTER ── -->
+  <footer class="border-t border-border py-8">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
+      <span class="font-black text-ink text-base">frame<span class="text-accent">log</span></span>
       <span>© 2026 Framelog. All rights reserved.</span>
       <div class="flex gap-6">
-        <a href="#" class="hover:text-white/40 transition-colors">Privacy</a>
-        <a href="#" class="hover:text-white/40 transition-colors">Terms</a>
+        <a href="#" class="hover:text-ink transition-colors">Privacy</a>
+        <a href="#" class="hover:text-ink transition-colors">Terms</a>
       </div>
     </div>
   </footer>
 
+  <!-- ── JS ── -->
+  <script>
+    // Scroll-reveal using IntersectionObserver
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    document.querySelectorAll('.reveal, .stagger').forEach((el) => {
+      observer.observe(el);
+    });
+
+    // Trigger hero elements immediately (already in viewport)
+    setTimeout(() => {
+      document.querySelectorAll('.reveal, .stagger').forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add('visible');
+        }
+      });
+    }, 50);
+
+    // Waitlist form
+    function handleSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('email-input');
+      const success = document.getElementById('form-success');
+      if (input.value) {
+        input.value = '';
+        success.classList.remove('hidden');
+      }
+    }
+  </script>
 </body>
 </html>
