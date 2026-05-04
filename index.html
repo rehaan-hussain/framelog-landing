@@ -508,21 +508,45 @@
           revealObs.unobserve(e.target);
         }
       }),
-      { threshold: 0.1, rootMargin: '0px 0px -48px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -48px 0px' }
     );
 
     document.querySelectorAll('.reveal, .stagger').forEach((el) => revealObs.observe(el));
 
-    // Immediately reveal anything already in viewport
-    requestAnimationFrame(() => {
-      document.querySelectorAll('.reveal, .stagger').forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight) {
+    // Reveal elements already in viewport — run after full layout paint
+    function revealInViewport() {
+      document.querySelectorAll('.reveal:not(.visible), .stagger:not(.visible)').forEach((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight + 10) {
           el.classList.add('visible');
         }
       });
-    });
+    }
+    // Belt-and-suspenders: fire at DOMContentLoaded, load, and two timeouts
+    // to cover slow font/image paint that shifts layout
+    document.addEventListener('DOMContentLoaded', revealInViewport);
+    window.addEventListener('load', revealInViewport);
+    setTimeout(revealInViewport, 150);
+    setTimeout(revealInViewport, 500);
 
-    // ── Waitlist form ─────────────────────────────────────────
+    // ── Waitlist form — with rate limiting ───────────────────
+    const RATE_LIMIT_MS  = 60_000; // 1 submission per minute per browser
+    const RL_KEY         = 'fl_waitlist_ts';
+    const SUBMITTED_KEY  = 'fl_waitlist_done';
+
+    function getRemainingCooldown() {
+      const last = parseInt(localStorage.getItem(RL_KEY) || '0', 10);
+      return Math.max(0, RATE_LIMIT_MS - (Date.now() - last));
+    }
+
+    // If already successfully submitted this session, lock the form
+    if (localStorage.getItem(SUBMITTED_KEY)) {
+      const btn = document.getElementById('submit-btn');
+      const success = document.getElementById('form-success');
+      btn.disabled = true;
+      success.textContent = '✓ You\'re already on the list!';
+      success.classList.remove('hidden');
+    }
+
     document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -534,19 +558,33 @@
 
       if (!email) return;
 
-      // Reset state
       success.classList.add('hidden');
       error.classList.add('hidden');
+
+      // Client-side rate limit
+      const cooldown = getRemainingCooldown();
+      if (cooldown > 0) {
+        const secs = Math.ceil(cooldown / 1000);
+        error.textContent = `Too many attempts — try again in ${secs}s.`;
+        error.classList.remove('hidden');
+        return;
+      }
+
       btn.disabled    = true;
       btn.textContent = 'Saving…';
 
-      // Guard: if placeholders not replaced yet, store locally and show success
-      if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-        console.warn('Supabase not configured — email not saved:', email);
+      // Record attempt timestamp immediately
+      localStorage.setItem(RL_KEY, Date.now().toString());
+
+      // Unconfigured guard (dev mode)
+      if (!SUPABASE_URL || SUPABASE_URL === '__SUPABASE_URL__') {
+        console.warn('Supabase not configured — running in demo mode.');
         input.value     = '';
         btn.disabled    = false;
         btn.textContent = 'Notify me';
+        success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
         success.classList.remove('hidden');
+        localStorage.setItem(SUBMITTED_KEY, '1');
         return;
       }
 
@@ -559,12 +597,14 @@
 
       if (dbError) {
         if (dbError.code === '23505') {
-          // Unique violation — already on list
           success.textContent = '✓ You\'re already on the list!';
           success.classList.remove('hidden');
+          localStorage.setItem(SUBMITTED_KEY, '1');
         } else {
-          error.textContent = 'Something went wrong. Try again.';
+          error.textContent = 'Something went wrong — please try again.';
           error.classList.remove('hidden');
+          // Clear rate limit so user can retry a genuine error
+          localStorage.removeItem(RL_KEY);
         }
         return;
       }
@@ -572,6 +612,8 @@
       input.value = '';
       success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
       success.classList.remove('hidden');
+      localStorage.setItem(SUBMITTED_KEY, '1');
+      btn.disabled = true; // lock after success
     });
   </script>
 </body>
