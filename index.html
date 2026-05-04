@@ -4,6 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Framelog — Job Photos, Organized by Job</title>
+
+  <!-- Favicon — inline SVG -->
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -22,218 +33,254 @@
             sans: ['Inter', 'system-ui', 'sans-serif'],
           },
           keyframes: {
-            'fade-up': {
-              '0%':   { opacity: '0', transform: 'translateY(28px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            'fade-in': {
-              '0%':   { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
             ticker: {
               '0%':   { transform: 'translateX(0)' },
               '100%': { transform: 'translateX(-50%)' },
             },
-            blink: {
-              '0%, 100%': { opacity: '1' },
-              '50%':       { opacity: '0' },
-            },
             pulse2: {
               '0%, 100%': { transform: 'scale(1)', opacity: '1' },
-              '50%':      { transform: 'scale(1.04)', opacity: '0.85' },
+              '50%':      { transform: 'scale(1.15)', opacity: '0.7' },
+            },
+            drawLine: {
+              '0%':   { width: '0%' },
+              '100%': { width: '100%' },
+            },
+            floatUp: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%':      { transform: 'translateY(-6px)' },
             },
           },
           animation: {
-            'fade-up':  'fade-up 0.6s cubic-bezier(0.16,1,0.3,1) forwards',
-            'fade-in':  'fade-in 0.5s ease forwards',
-            ticker:     'ticker 22s linear infinite',
-            blink:      'blink 1.1s step-end infinite',
-            pulse2:     'pulse2 2.4s ease-in-out infinite',
+            ticker:   'ticker 24s linear infinite',
+            pulse2:   'pulse2 2s ease-in-out infinite',
+            floatUp:  'floatUp 4s ease-in-out infinite',
           },
         }
       }
     }
   </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
-    /* Scroll-reveal utility */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+    html { scroll-behavior: auto; } /* Lenis owns scrolling */
+
+    /* ── Reveal on scroll ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition:
+        opacity  0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* Stagger children */
-    .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
-    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0ms; }
-    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:90ms; }
-    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:180ms; }
-    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:270ms; }
+    /* ── Stagger grid children ── */
+    .stagger > * {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity  0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0ms; }
+    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay: 100ms; }
+    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay: 200ms; }
 
-    /* Card hover lift */
-    .card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
-    .card-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    /* ── Card hover lift ── */
+    .card-lift { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease; }
+    .card-lift:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.09); }
 
-    /* Ticker tape */
-    .ticker-wrap { overflow: hidden; white-space: nowrap; }
-    .ticker-inner { display: inline-flex; animation: ticker 22s linear infinite; }
+    /* ── Ticker ── */
+    .ticker-wrap  { overflow: hidden; white-space: nowrap; }
+    .ticker-inner { display: inline-flex; animation: ticker 24s linear infinite; }
     .ticker-inner:hover { animation-play-state: paused; }
 
-    /* Phone mockup photo grid pulse */
-    .photo-thumb { animation: pulse2 2.4s ease-in-out infinite; }
-    .photo-thumb:nth-child(2) { animation-delay: 0.3s; }
-    .photo-thumb:nth-child(3) { animation-delay: 0.6s; }
-
-    /* Underline draw on hero */
-    .underline-draw { position: relative; display: inline-block; }
+    /* ── Animated underline on hero ── */
+    .underline-draw { position: relative; display: inline; }
     .underline-draw::after {
       content: '';
       position: absolute;
-      bottom: -4px; left: 0;
-      width: 0; height: 3px;
+      bottom: -6px; left: 0;
+      height: 4px;
+      width: 0;
       background: #F97316;
-      animation: draw-line 1s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+      border-radius: 2px;
+      animation: drawLine 1.1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
     }
-    @keyframes draw-line { to { width: 100%; } }
 
-    /* CTA button shimmer */
+    /* ── Primary button ── */
     .btn-primary {
-      position: relative;
-      overflow: hidden;
       background: #0F0F0F;
       color: #fff;
-      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.22s, transform 0.18s;
     }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0);
-      transition: background 0.2s;
-    }
-    .btn-primary:hover { background: #2a2a2a; }
+    .btn-primary:hover { background: #272727; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
 
-    /* Subtle border on inputs */
+    /* ── Scroll progress bar ── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: #F97316;
+      z-index: 100;
+      transition: width 0.1s linear;
+    }
+
+    /* ── Input focus ── */
     input:focus { outline: 2px solid #0F0F0F; outline-offset: 2px; }
+
+    /* ── Phone float ── */
+    .phone-float { animation: floatUp 4s ease-in-out infinite; }
   </style>
 </head>
 
 <body class="bg-cream text-ink font-sans antialiased">
 
-  <!-- ── NAV ── -->
+  <!-- Scroll progress -->
+  <div id="progress-bar"></div>
+
+  <!-- ─────────────── NAV ─────────────── -->
   <nav class="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border">
     <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-      <span class="text-lg font-black tracking-tight">
-        frame<span class="text-accent">log</span>
-      </span>
+
+      <!-- Logo mark + wordmark -->
+      <a href="#" class="flex items-center gap-2.5" data-lenis-prevent>
+        <svg viewBox="0 0 40 40" fill="none" class="w-7 h-7" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 14 L5 5 L14 5"  stroke="#0F0F0F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 5 L35 5 L35 14" stroke="#0F0F0F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 26 L5 35 L14 35" stroke="#0F0F0F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 35 L35 35 L35 26" stroke="#0F0F0F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="20" r="4.5" fill="#F97316"/>
+        </svg>
+        <span class="text-lg font-black tracking-tight">frame<span class="text-accent">log</span></span>
+      </a>
+
       <div class="flex items-center gap-3">
         <span class="hidden sm:inline text-xs font-semibold bg-ink text-cream px-3 py-1 rounded-full tracking-widest uppercase">
           Coming soon
         </span>
-        <a href="#waitlist"
-           class="btn-primary text-sm font-semibold px-5 py-2 rounded-full">
+        <a href="#waitlist" class="btn-primary text-sm font-semibold px-5 py-2 rounded-full">
           Join waitlist
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- ── HERO ── -->
+  <!-- ─────────────── HERO ─────────────── -->
   <section class="max-w-5xl mx-auto px-6 pt-24 pb-20">
-    <div class="max-w-3xl">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
 
-      <div class="reveal mb-6">
-        <span class="inline-flex items-center gap-2 text-xs font-semibold text-muted border border-border bg-paper px-3 py-1.5 rounded-full">
-          <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
-          iOS app · launching soon
-        </span>
+      <!-- Copy -->
+      <div>
+        <div class="reveal mb-7">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold text-muted border border-border bg-paper px-3 py-1.5 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
+            iOS app · launching soon
+          </span>
+        </div>
+
+        <h1 class="reveal text-6xl sm:text-7xl font-black leading-[0.93] tracking-tighter mb-8" style="transition-delay:80ms">
+          Your job photos.<br />
+          <span class="underline-draw">Organized by job.</span>
+        </h1>
+
+        <p class="reveal text-lg text-muted leading-relaxed mb-10" style="transition-delay:160ms">
+          Stop digging through your camera roll. Framelog keeps every project's
+          photos separate — automatically. No albums. No manual sorting.
+          Just tap a job, see its photos.
+        </p>
+
+        <div class="reveal flex flex-col sm:flex-row gap-3" style="transition-delay:240ms">
+          <a href="#waitlist" class="btn-primary font-bold text-base px-8 py-4 rounded-2xl text-center">
+            Join the waitlist
+          </a>
+          <a href="#how-it-works"
+             class="border border-border bg-paper hover:bg-soft text-ink font-semibold text-base px-8 py-4 rounded-2xl transition-colors text-center">
+            See how it works ↓
+          </a>
+        </div>
       </div>
 
-      <h1 class="reveal text-6xl sm:text-7xl md:text-8xl font-black leading-[0.95] tracking-tighter mb-8" style="transition-delay:80ms">
-        Your job photos.<br />
-        <span class="underline-draw">Organized by job.</span>
-      </h1>
+      <!-- Phone mockup -->
+      <div class="reveal flex justify-center lg:justify-end" style="transition-delay:300ms">
+        <div class="relative phone-float">
+          <!-- Soft glow -->
+          <div class="absolute -inset-8 bg-accent/8 rounded-[5rem] blur-3xl pointer-events-none"></div>
 
-      <p class="reveal text-xl text-muted leading-relaxed max-w-lg mb-10" style="transition-delay:160ms">
-        Stop digging through your camera roll. Framelog keeps every project's
-        photos separate — automatically. No albums. No manual sorting.
-        Just tap a job, see its photos.
-      </p>
-
-      <div class="reveal flex flex-col sm:flex-row gap-3" style="transition-delay:240ms">
-        <a href="#waitlist"
-           class="btn-primary font-bold text-base px-8 py-4 rounded-2xl inline-block text-center">
-          Join the waitlist
-        </a>
-        <a href="#how-it-works"
-           class="border border-border bg-paper hover:bg-soft text-ink font-semibold text-base px-8 py-4 rounded-2xl transition-colors text-center">
-          See how it works ↓
-        </a>
-      </div>
-    </div>
-
-    <!-- Phone mockup -->
-    <div class="reveal mt-20" style="transition-delay:320ms">
-      <div class="flex justify-start">
-        <div class="relative">
-          <!-- Glow backdrop -->
-          <div class="absolute -inset-6 bg-accent/5 rounded-[4rem] blur-2xl"></div>
-          <!-- Device -->
-          <div class="relative w-64 sm:w-72 bg-ink rounded-[2.8rem] border-4 border-ink shadow-2xl overflow-hidden">
-            <!-- Screen -->
-            <div class="bg-[#161616] px-4 pt-6 pb-6">
-              <!-- Notch -->
+          <div class="relative w-64 sm:w-72 bg-ink rounded-[2.8rem] border-[5px] border-ink shadow-2xl overflow-hidden">
+            <div class="bg-[#161616] px-4 pt-5 pb-6">
+              <!-- Dynamic island -->
               <div class="flex justify-center mb-4">
-                <div class="w-20 h-5 bg-ink rounded-full"></div>
+                <div class="w-24 h-6 bg-ink rounded-full flex items-center justify-center gap-2">
+                  <div class="w-2 h-2 rounded-full bg-[#2a2a2a]"></div>
+                  <div class="w-3 h-3 rounded-full bg-[#2a2a2a]"></div>
+                </div>
               </div>
+
               <!-- App bar -->
-              <div class="flex items-center justify-between mb-5">
-                <span class="text-white font-black text-sm">frame<span class="text-accent">log</span></span>
-                <button class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white text-lg font-light leading-none">+</button>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-1.5">
+                  <svg viewBox="0 0 40 40" fill="none" class="w-5 h-5">
+                    <path d="M5 14 L5 5 L14 5"  stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M26 5 L35 5 L35 14" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 26 L5 35 L14 35" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M26 35 L35 35 L35 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="20" cy="20" r="4.5" fill="#F97316"/>
+                  </svg>
+                  <span class="text-white font-black text-sm">frame<span class="text-accent">log</span></span>
+                </div>
+                <button class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white font-light text-xl leading-none">+</button>
               </div>
-              <!-- Job cards -->
-              <div class="space-y-3">
-                <!-- Job 1 — active -->
+
+              <!-- Job list -->
+              <div class="space-y-2.5">
                 <div class="bg-[#1F1F1F] rounded-2xl p-3">
                   <div class="flex justify-between items-center mb-2">
                     <span class="text-white text-xs font-semibold">Kitchen reno — Smith</span>
                     <span class="text-white/30 text-[10px]">14 photos</span>
                   </div>
                   <div class="grid grid-cols-3 gap-1.5">
-                    <div class="photo-thumb aspect-square rounded-xl bg-amber-700/40"></div>
-                    <div class="photo-thumb aspect-square rounded-xl bg-amber-600/30"></div>
-                    <div class="photo-thumb aspect-square rounded-xl bg-amber-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+11</div>
+                    <div class="aspect-square rounded-xl bg-amber-700/50"></div>
+                    <div class="aspect-square rounded-xl bg-amber-600/35"></div>
+                    <div class="aspect-square rounded-xl bg-amber-500/20 flex items-center justify-center text-white/40 text-[10px] font-bold">+11</div>
                   </div>
                 </div>
-                <!-- Job 2 -->
+
                 <div class="bg-[#1F1F1F] rounded-2xl p-3">
                   <div class="flex justify-between items-center mb-2">
                     <span class="text-white text-xs font-semibold">Roof repair — Jones</span>
                     <span class="text-white/30 text-[10px]">8 photos</span>
                   </div>
                   <div class="grid grid-cols-3 gap-1.5">
-                    <div class="aspect-square rounded-xl bg-sky-700/40"></div>
-                    <div class="aspect-square rounded-xl bg-sky-600/30"></div>
-                    <div class="aspect-square rounded-xl bg-sky-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+5</div>
+                    <div class="aspect-square rounded-xl bg-sky-700/50"></div>
+                    <div class="aspect-square rounded-xl bg-sky-600/35"></div>
+                    <div class="aspect-square rounded-xl bg-sky-500/20 flex items-center justify-center text-white/40 text-[10px] font-bold">+5</div>
                   </div>
                 </div>
-                <!-- Job 3 -->
+
                 <div class="bg-[#1F1F1F] rounded-2xl p-3">
                   <div class="flex justify-between items-center mb-2">
                     <span class="text-white text-xs font-semibold">Bathroom tile — Lee</span>
                     <span class="text-white/30 text-[10px]">22 photos</span>
                   </div>
                   <div class="grid grid-cols-3 gap-1.5">
-                    <div class="aspect-square rounded-xl bg-emerald-700/40"></div>
-                    <div class="aspect-square rounded-xl bg-emerald-600/30"></div>
-                    <div class="aspect-square rounded-xl bg-emerald-500/20 flex items-center justify-center text-white/30 text-[10px] font-semibold">+19</div>
+                    <div class="aspect-square rounded-xl bg-emerald-700/50"></div>
+                    <div class="aspect-square rounded-xl bg-emerald-600/35"></div>
+                    <div class="aspect-square rounded-xl bg-emerald-500/20 flex items-center justify-center text-white/40 text-[10px] font-bold">+19</div>
                   </div>
                 </div>
               </div>
-              <!-- Bottom bar -->
+
               <div class="mt-5 flex justify-center">
-                <div class="w-24 h-1 bg-white/20 rounded-full"></div>
+                <div class="w-24 h-1 bg-white/15 rounded-full"></div>
               </div>
             </div>
           </div>
@@ -242,46 +289,46 @@
     </div>
   </section>
 
-  <!-- ── TICKER ── -->
-  <div class="border-y border-border bg-paper py-4 overflow-hidden">
+  <!-- ─────────────── TICKER ─────────────── -->
+  <div class="border-y border-border bg-paper py-4">
     <div class="ticker-wrap">
-      <div class="ticker-inner">
+      <div class="ticker-inner select-none">
         <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
-        <span class="text-accent px-2">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Access from any device</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
-        <span class="text-accent px-2">·</span>
-        <!-- Duplicate for seamless loop -->
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">One user, unlimited jobs</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <!-- duplicate for seamless loop -->
         <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
-        <span class="text-accent px-2">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Access from any device</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
         <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
-        <span class="text-accent px-2">·</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">One user, unlimited jobs</span>
+        <span class="text-accent px-3 font-bold">·</span>
       </div>
     </div>
   </div>
 
-  <!-- ── PROBLEM ── -->
+  <!-- ─────────────── PROBLEM ─────────────── -->
   <section class="max-w-5xl mx-auto px-6 py-28">
     <div class="max-w-2xl">
       <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">The problem</p>
       <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight mb-8" style="transition-delay:80ms">
-        Your camera roll is a mess.
-        <span class="text-muted"> And you know it.</span>
+        Your camera roll is a mess.<br />
+        <span class="text-muted">And you know it.</span>
       </h2>
       <p class="reveal text-lg text-muted leading-relaxed" style="transition-delay:160ms">
         You've got 3,000 photos. Some are jobs. Some are personal. Some are both.
@@ -309,7 +356,7 @@
     </div>
   </section>
 
-  <!-- ── SOLUTION ── -->
+  <!-- ─────────────── SOLUTION ─────────────── -->
   <section id="how-it-works" class="bg-paper border-y border-border py-28">
     <div class="max-w-5xl mx-auto px-6">
       <div class="max-w-2xl mb-16">
@@ -320,101 +367,34 @@
         </h2>
       </div>
 
-      <div class="stagger grid sm:grid-cols-3 gap-4">
-        <!-- Feature 1 -->
-        <div class="card-lift border border-border rounded-3xl p-8">
-          <div class="text-4xl mb-6">📁</div>
-          <h3 class="text-xl font-bold mb-3 tracking-tight">Open a job, see its photos</h3>
-          <p class="text-muted leading-relaxed text-sm">Every project has its own space. Nothing spills over.</p>
+      <!-- 2 cards only -->
+      <div class="stagger grid sm:grid-cols-2 gap-5">
+        <div class="card-lift border border-border rounded-3xl p-10">
+          <div class="text-5xl mb-7">📁</div>
+          <h3 class="text-2xl font-bold mb-4 tracking-tight">Open a job, see its photos</h3>
+          <p class="text-muted leading-relaxed">Every project has its own space. Nothing spills over.</p>
         </div>
-        <!-- Feature 2 — highlighted -->
-        <div class="card-lift border-2 border-ink rounded-3xl p-8 bg-ink text-paper">
-          <div class="text-4xl mb-6">📷</div>
-          <h3 class="text-xl font-bold mb-3 tracking-tight">In-app camera</h3>
-          <p class="text-paper/50 leading-relaxed text-sm">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
-        </div>
-        <!-- Feature 3 -->
-        <div class="card-lift border border-border rounded-3xl p-8">
-          <div class="text-4xl mb-6">💻</div>
-          <h3 class="text-xl font-bold mb-3 tracking-tight">Access from any device</h3>
-          <p class="text-muted leading-relaxed text-sm">Log in on your phone or browser. Your jobs follow you.</p>
+
+        <div class="card-lift border-2 border-ink rounded-3xl p-10 bg-ink text-paper">
+          <div class="text-5xl mb-7">📷</div>
+          <h3 class="text-2xl font-bold mb-4 tracking-tight">In-app camera</h3>
+          <p class="text-paper/50 leading-relaxed">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── SOCIAL PROOF ── -->
-  <section class="max-w-5xl mx-auto px-6 py-28">
-    <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">What they're saying</p>
-    <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight mb-16" style="transition-delay:80ms">
-      Real feedback from solo pros.
-    </h2>
-
-    <div class="stagger grid sm:grid-cols-3 gap-4">
-      <!-- Testimonial 1 -->
-      <div class="card-lift bg-paper border border-border rounded-3xl p-8 flex flex-col justify-between">
-        <div>
-          <div class="flex gap-0.5 mb-5 text-accent text-sm">★★★★★</div>
-          <p class="text-ink text-base leading-relaxed mb-6">
-            "I used to dread sending photos to clients. Now I just open the job and hit share. Done."
-          </p>
-        </div>
-        <div class="flex items-center gap-3 pt-5 border-t border-border">
-          <div class="w-9 h-9 rounded-full bg-soft flex items-center justify-center text-sm font-bold text-muted">MT</div>
-          <div>
-            <p class="text-sm font-semibold text-ink">Marcus T.</p>
-            <p class="text-xs text-muted">Electrician · Dubai</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 2 — placeholder -->
-      <div class="card-lift bg-soft border border-border rounded-3xl p-8 flex flex-col justify-between">
-        <div>
-          <div class="flex gap-0.5 mb-5 text-muted text-sm">★★★★★</div>
-          <p class="text-muted text-base leading-relaxed mb-6 italic">
-            [QUOTE HERE — focus on time saved or client confidence in a specific situation]
-          </p>
-        </div>
-        <div class="flex items-center gap-3 pt-5 border-t border-border">
-          <div class="w-9 h-9 rounded-full bg-border flex items-center justify-center text-sm font-bold text-muted">?</div>
-          <div>
-            <p class="text-sm font-semibold text-muted">[Name]</p>
-            <p class="text-xs text-muted">[Trade] · [City]</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 3 — placeholder -->
-      <div class="card-lift bg-soft border border-border rounded-3xl p-8 flex flex-col justify-between">
-        <div>
-          <div class="flex gap-0.5 mb-5 text-muted text-sm">★★★★★</div>
-          <p class="text-muted text-base leading-relaxed mb-6 italic">
-            [QUOTE HERE — focus on time saved or client confidence in a specific situation]
-          </p>
-        </div>
-        <div class="flex items-center gap-3 pt-5 border-t border-border">
-          <div class="w-9 h-9 rounded-full bg-border flex items-center justify-center text-sm font-bold text-muted">?</div>
-          <div>
-            <p class="text-sm font-semibold text-muted">[Name]</p>
-            <p class="text-xs text-muted">[Trade] · [City]</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── WAITLIST (replaces pricing) ── -->
-  <section id="waitlist" class="bg-ink text-paper border-y border-ink py-28">
+  <!-- ─────────────── WAITLIST ─────────────── -->
+  <section id="waitlist" class="bg-ink text-paper py-32">
     <div class="max-w-2xl mx-auto px-6 text-center">
-      <div class="reveal mb-6">
+      <div class="reveal mb-7">
         <span class="inline-flex items-center gap-2 text-xs font-semibold text-paper/40 border border-white/10 px-3 py-1.5 rounded-full">
           <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
           Launching soon on iOS
         </span>
       </div>
 
-      <h2 class="reveal text-5xl sm:text-6xl font-black tracking-tight leading-tight mb-5" style="transition-delay:80ms">
+      <h2 class="reveal text-5xl sm:text-6xl font-black tracking-tight leading-[1.0] mb-6" style="transition-delay:80ms">
         Be first to know<br />when we launch.
       </h2>
       <p class="reveal text-paper/50 text-lg leading-relaxed mb-12" style="transition-delay:160ms">
@@ -422,24 +402,28 @@
         We'll email you the moment Framelog hits the App Store.
       </p>
 
-      <!-- Email form -->
-      <form class="reveal" style="transition-delay:240ms" onsubmit="handleSubmit(event)">
+      <form class="reveal" style="transition-delay:240ms" id="waitlist-form" novalidate>
         <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
           <input
             type="email"
             id="email-input"
             required
+            autocomplete="email"
             placeholder="your@email.com"
-            class="flex-1 bg-white/5 border border-white/10 text-paper placeholder-paper/30 rounded-2xl px-5 py-4 text-base font-medium"
+            class="flex-1 bg-white/5 border border-white/10 text-paper placeholder-white/25 rounded-2xl px-5 py-4 text-base font-medium transition-colors focus:border-white/30"
           />
           <button
             type="submit"
-            class="bg-accent hover:bg-orange-600 text-white font-bold px-7 py-4 rounded-2xl transition-colors whitespace-nowrap"
+            id="submit-btn"
+            class="bg-accent hover:bg-orange-500 active:bg-orange-600 text-white font-bold px-7 py-4 rounded-2xl transition-colors whitespace-nowrap"
           >
             Notify me
           </button>
         </div>
-        <p id="form-success" class="hidden text-accent text-sm font-semibold mt-4">
+
+        <!-- States -->
+        <p id="form-error"   class="hidden text-red-400 text-sm font-medium mt-4"></p>
+        <p id="form-success" class="hidden text-accent  text-sm font-semibold mt-4">
           ✓ You're on the list. We'll be in touch soon.
         </p>
       </form>
@@ -450,78 +434,145 @@
     </div>
   </section>
 
-  <!-- ── FINAL CTA ── -->
-  <section class="max-w-5xl mx-auto px-6 py-28 text-center">
-    <h2 class="reveal text-5xl sm:text-6xl font-black tracking-tight leading-tight mb-6">
-      Get your photos under control<br />
-      <span class="text-accent">— today.</span>
-    </h2>
-    <p class="reveal text-lg text-muted leading-relaxed mb-10 max-w-md mx-auto" style="transition-delay:80ms">
-      Takes 2 minutes to set up. No camera roll access needed. Start with one job.
-    </p>
-    <div class="reveal" style="transition-delay:160ms">
-      <a href="#waitlist"
-         class="btn-primary inline-block font-bold text-lg px-10 py-5 rounded-2xl">
-        Download free on the App Store
-      </a>
-      <p class="text-muted text-sm mt-6">
-        Used by solo contractors, consultants, and field workers.<br />
-        Built for one. Priced for one.
-      </p>
-    </div>
-  </section>
-
-  <!-- ── FOOTER ── -->
+  <!-- ─────────────── FOOTER ─────────────── -->
   <footer class="border-t border-border py-8">
     <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
-      <span class="font-black text-ink text-base">frame<span class="text-accent">log</span></span>
+      <a href="#" class="flex items-center gap-2">
+        <svg viewBox="0 0 40 40" fill="none" class="w-5 h-5">
+          <path d="M5 14 L5 5 L14 5"  stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 5 L35 5 L35 14" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 26 L5 35 L14 35" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 35 L35 35 L35 26" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="20" r="4.5" fill="#F97316" fill-opacity="0.7"/>
+        </svg>
+        <span class="font-black text-ink">frame<span class="text-accent">log</span></span>
+      </a>
       <span>© 2026 Framelog. All rights reserved.</span>
-      <div class="flex gap-6">
-        <a href="#" class="hover:text-ink transition-colors">Privacy</a>
-        <a href="#" class="hover:text-ink transition-colors">Terms</a>
-      </div>
     </div>
   </footer>
 
-  <!-- ── JS ── -->
+  <!-- ─────────────── SCRIPTS ─────────────── -->
   <script>
-    // Scroll-reveal using IntersectionObserver
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
+    // ── Supabase ──────────────────────────────────────────────
+    // 1. Create a project at supabase.com
+    // 2. Run in SQL editor:
+    //      create table waitlist (
+    //        id         bigserial primary key,
+    //        email      text not null unique,
+    //        created_at timestamptz default now()
+    //      );
+    //      alter table waitlist enable row level security;
+    //      create policy "public insert" on waitlist for insert with check (true);
+    // 3. Replace the two placeholders below with your project URL and anon key
+    const SUPABASE_URL      = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
-    document.querySelectorAll('.reveal, .stagger').forEach((el) => {
-      observer.observe(el);
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ── Lenis smooth scroll ───────────────────────────────────
+    const lenis = new Lenis({
+      duration:  1.25,
+      easing:    (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
     });
 
-    // Trigger hero elements immediately (already in viewport)
-    setTimeout(() => {
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Intercept anchor clicks → Lenis scroll
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const id = anchor.getAttribute('href');
+        if (id === '#') return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -72, duration: 1.4 });
+      });
+    });
+
+    // ── Scroll progress bar ───────────────────────────────────
+    const bar = document.getElementById('progress-bar');
+    lenis.on('scroll', ({ progress }) => {
+      bar.style.width = (progress * 100) + '%';
+    });
+
+    // ── Scroll-reveal via IntersectionObserver ────────────────
+    const revealObs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.1, rootMargin: '0px 0px -48px 0px' }
+    );
+
+    document.querySelectorAll('.reveal, .stagger').forEach((el) => revealObs.observe(el));
+
+    // Immediately reveal anything already in viewport
+    requestAnimationFrame(() => {
       document.querySelectorAll('.reveal, .stagger').forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight) {
+        if (el.getBoundingClientRect().top < window.innerHeight) {
           el.classList.add('visible');
         }
       });
-    }, 50);
+    });
 
-    // Waitlist form
-    function handleSubmit(e) {
+    // ── Waitlist form ─────────────────────────────────────────
+    document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('email-input');
+
+      const input   = document.getElementById('email-input');
+      const btn     = document.getElementById('submit-btn');
       const success = document.getElementById('form-success');
-      if (input.value) {
-        input.value = '';
+      const error   = document.getElementById('form-error');
+      const email   = input.value.trim();
+
+      if (!email) return;
+
+      // Reset state
+      success.classList.add('hidden');
+      error.classList.add('hidden');
+      btn.disabled    = true;
+      btn.textContent = 'Saving…';
+
+      // Guard: if placeholders not replaced yet, store locally and show success
+      if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+        console.warn('Supabase not configured — email not saved:', email);
+        input.value     = '';
+        btn.disabled    = false;
+        btn.textContent = 'Notify me';
         success.classList.remove('hidden');
+        return;
       }
-    }
+
+      const { error: dbError } = await db
+        .from('waitlist')
+        .insert({ email });
+
+      btn.disabled    = false;
+      btn.textContent = 'Notify me';
+
+      if (dbError) {
+        if (dbError.code === '23505') {
+          // Unique violation — already on list
+          success.textContent = '✓ You\'re already on the list!';
+          success.classList.remove('hidden');
+        } else {
+          error.textContent = 'Something went wrong. Try again.';
+          error.classList.remove('hidden');
+        }
+        return;
+      }
+
+      input.value = '';
+      success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
+      success.classList.remove('hidden');
+    });
   </script>
 </body>
 </html>
