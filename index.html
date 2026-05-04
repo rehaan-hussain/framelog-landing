@@ -453,6 +453,61 @@
 
   <!-- ─────────────── SCRIPTS ─────────────── -->
   <script>
+    // ── Reveal — defined and called FIRST, before anything async ─
+    // DOMContentLoaded / load events may have already fired by the time
+    // an inline script at the bottom of <body> runs, so we call directly.
+    function revealInViewport() {
+      document.querySelectorAll('.reveal:not(.visible), .stagger:not(.visible)').forEach((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight + 10) {
+          el.classList.add('visible');
+        }
+      });
+    }
+
+    const revealObs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.05, rootMargin: '0px 0px -48px 0px' }
+    );
+    document.querySelectorAll('.reveal, .stagger').forEach((el) => revealObs.observe(el));
+
+    // Synchronous call — runs immediately during HTML parse, before paint
+    revealInViewport();
+    // Backup calls cover any layout shift from late-loading fonts/images
+    setTimeout(revealInViewport, 100);
+    setTimeout(revealInViewport, 400);
+
+    // ── Lenis smooth scroll (wrapped so errors never block reveal) ─
+    let lenis = null;
+    try {
+      lenis = new Lenis({
+        duration:    1.25,
+        easing:      (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+      (function raf(time) { lenis.raf(time); requestAnimationFrame(raf); })(0);
+
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (e) => {
+          const id = anchor.getAttribute('href');
+          if (id === '#') return;
+          const target = document.querySelector(id);
+          if (!target) return;
+          e.preventDefault();
+          lenis.scrollTo(target, { offset: -72, duration: 1.4 });
+        });
+      });
+
+      const bar = document.getElementById('progress-bar');
+      lenis.on('scroll', ({ progress }) => { bar.style.width = (progress * 100) + '%'; });
+    } catch (err) {
+      console.warn('Lenis failed to init:', err);
+    }
+
     // ── Supabase ──────────────────────────────────────────────
     // 1. Create a project at supabase.com
     // 2. Run in SQL editor:
@@ -463,70 +518,14 @@
     //      );
     //      alter table waitlist enable row level security;
     //      create policy "public insert" on waitlist for insert with check (true);
-    // 3. Replace the two placeholders below with your project URL and anon key
+    // 3. Fill in .env (locally) or Netlify env vars (in production)
     const SUPABASE_URL      = '__SUPABASE_URL__';
     const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
 
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // ── Lenis smooth scroll ───────────────────────────────────
-    const lenis = new Lenis({
-      duration:  1.25,
-      easing:    (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    let db = null;
+    try { db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (err) {
+      console.warn('Supabase failed to init:', err);
     }
-    requestAnimationFrame(raf);
-
-    // Intercept anchor clicks → Lenis scroll
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener('click', (e) => {
-        const id = anchor.getAttribute('href');
-        if (id === '#') return;
-        const target = document.querySelector(id);
-        if (!target) return;
-        e.preventDefault();
-        lenis.scrollTo(target, { offset: -72, duration: 1.4 });
-      });
-    });
-
-    // ── Scroll progress bar ───────────────────────────────────
-    const bar = document.getElementById('progress-bar');
-    lenis.on('scroll', ({ progress }) => {
-      bar.style.width = (progress * 100) + '%';
-    });
-
-    // ── Scroll-reveal via IntersectionObserver ────────────────
-    const revealObs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          revealObs.unobserve(e.target);
-        }
-      }),
-      { threshold: 0.05, rootMargin: '0px 0px -48px 0px' }
-    );
-
-    document.querySelectorAll('.reveal, .stagger').forEach((el) => revealObs.observe(el));
-
-    // Reveal elements already in viewport — run after full layout paint
-    function revealInViewport() {
-      document.querySelectorAll('.reveal:not(.visible), .stagger:not(.visible)').forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight + 10) {
-          el.classList.add('visible');
-        }
-      });
-    }
-    // Belt-and-suspenders: fire at DOMContentLoaded, load, and two timeouts
-    // to cover slow font/image paint that shifts layout
-    document.addEventListener('DOMContentLoaded', revealInViewport);
-    window.addEventListener('load', revealInViewport);
-    setTimeout(revealInViewport, 150);
-    setTimeout(revealInViewport, 500);
 
     // ── Waitlist form — with rate limiting ───────────────────
     const RATE_LIMIT_MS  = 60_000; // 1 submission per minute per browser
@@ -577,7 +576,7 @@
       localStorage.setItem(RL_KEY, Date.now().toString());
 
       // Unconfigured guard (dev mode)
-      if (!SUPABASE_URL || SUPABASE_URL === '__SUPABASE_URL__') {
+      if (!db || !SUPABASE_URL || SUPABASE_URL === '__SUPABASE_URL__') {
         console.warn('Supabase not configured — running in demo mode.');
         input.value     = '';
         btn.disabled    = false;
