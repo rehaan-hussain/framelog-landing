@@ -511,18 +511,10 @@
     // ── Waitlist form ─────────────────────────────────────────
     const RATE_LIMIT_MS = 60_000;
     const RL_KEY        = 'fl_waitlist_ts';
-    const SUBMITTED_KEY = 'fl_waitlist_done';
 
     function getRemainingCooldown() {
       const last = parseInt(localStorage.getItem(RL_KEY) || '0', 10);
       return Math.max(0, RATE_LIMIT_MS - (Date.now() - last));
-    }
-
-    if (localStorage.getItem(SUBMITTED_KEY)) {
-      document.getElementById('submit-btn').disabled = true;
-      const s = document.getElementById('form-success');
-      s.textContent = '✓ You\'re already on the list!';
-      s.classList.remove('hidden');
     }
 
     document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
@@ -573,8 +565,6 @@
         input.value = '';
         success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
         success.classList.remove('hidden');
-        localStorage.setItem(SUBMITTED_KEY, '1');
-        btn.disabled = true;
       } else {
         error.textContent = 'Something went wrong — please try again.';
         error.classList.remove('hidden');
