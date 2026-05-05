@@ -11,9 +11,6 @@
   <!-- Lenis smooth scroll -->
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -508,42 +505,21 @@
       console.warn('Lenis failed to init:', err);
     }
 
-    // ── Supabase ──────────────────────────────────────────────
-    // 1. Create a project at supabase.com
-    // 2. Run in SQL editor:
-    //      create table waitlist (
-    //        id         bigserial primary key,
-    //        email      text not null unique,
-    //        created_at timestamptz default now()
-    //      );
-    //      alter table waitlist enable row level security;
-    //      create policy "public insert" on waitlist for insert with check (true);
-    // 3. Fill in .env (locally) or Netlify env vars (in production)
-    const SUPABASE_URL      = '__SUPABASE_URL__';
-    const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
-
-    let db = null;
-    try { db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (err) {
-      console.warn('Supabase failed to init:', err);
-    }
-
-    // ── Waitlist form — with rate limiting ───────────────────
-    const RATE_LIMIT_MS  = 60_000; // 1 submission per minute per browser
-    const RL_KEY         = 'fl_waitlist_ts';
-    const SUBMITTED_KEY  = 'fl_waitlist_done';
+    // ── Waitlist form ─────────────────────────────────────────
+    const RATE_LIMIT_MS = 60_000;
+    const RL_KEY        = 'fl_waitlist_ts';
+    const SUBMITTED_KEY = 'fl_waitlist_done';
 
     function getRemainingCooldown() {
       const last = parseInt(localStorage.getItem(RL_KEY) || '0', 10);
       return Math.max(0, RATE_LIMIT_MS - (Date.now() - last));
     }
 
-    // If already successfully submitted this session, lock the form
     if (localStorage.getItem(SUBMITTED_KEY)) {
-      const btn = document.getElementById('submit-btn');
-      const success = document.getElementById('form-success');
-      btn.disabled = true;
-      success.textContent = '✓ You\'re already on the list!';
-      success.classList.remove('hidden');
+      document.getElementById('submit-btn').disabled = true;
+      const s = document.getElementById('form-success');
+      s.textContent = '✓ You\'re already on the list!';
+      s.classList.remove('hidden');
     }
 
     document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
@@ -556,63 +532,53 @@
       const email   = input.value.trim();
 
       if (!email) return;
-
       success.classList.add('hidden');
       error.classList.add('hidden');
 
-      // Client-side rate limit
       const cooldown = getRemainingCooldown();
       if (cooldown > 0) {
-        const secs = Math.ceil(cooldown / 1000);
-        error.textContent = `Too many attempts — try again in ${secs}s.`;
+        error.textContent = `Too many attempts — try again in ${Math.ceil(cooldown / 1000)}s.`;
         error.classList.remove('hidden');
         return;
       }
 
       btn.disabled    = true;
       btn.textContent = 'Saving…';
-
-      // Record attempt timestamp immediately
       localStorage.setItem(RL_KEY, Date.now().toString());
 
-      // Unconfigured guard (dev mode)
-      if (!db || !SUPABASE_URL || SUPABASE_URL === '__SUPABASE_URL__') {
-        console.warn('Supabase not configured — running in demo mode.');
-        input.value     = '';
+      let data;
+      try {
+        const res = await fetch('/.netlify/functions/waitlist', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email }),
+        });
+        data = await res.json();
+      } catch {
         btn.disabled    = false;
         btn.textContent = 'Notify me';
-        success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
-        success.classList.remove('hidden');
-        localStorage.setItem(SUBMITTED_KEY, '1');
+        error.textContent = 'Network error — please try again.';
+        error.classList.remove('hidden');
+        localStorage.removeItem(RL_KEY);
         return;
       }
-
-      const { error: dbError } = await db
-        .from('waitlist')
-        .insert({ email });
 
       btn.disabled    = false;
       btn.textContent = 'Notify me';
 
-      if (dbError) {
-        if (dbError.code === '23505') {
-          success.textContent = '✓ You\'re already on the list!';
-          success.classList.remove('hidden');
-          localStorage.setItem(SUBMITTED_KEY, '1');
-        } else {
-          error.textContent = 'Something went wrong — please try again.';
-          error.classList.remove('hidden');
-          // Clear rate limit so user can retry a genuine error
-          localStorage.removeItem(RL_KEY);
-        }
-        return;
+      if (data.success || data.already_exists) {
+        input.value = '';
+        success.textContent = data.already_exists
+          ? '✓ You\'re already on the list!'
+          : '✓ You\'re on the list. We\'ll be in touch soon.';
+        success.classList.remove('hidden');
+        localStorage.setItem(SUBMITTED_KEY, '1');
+        btn.disabled = true;
+      } else {
+        error.textContent = 'Something went wrong — please try again.';
+        error.classList.remove('hidden');
+        localStorage.removeItem(RL_KEY);
       }
-
-      input.value = '';
-      success.textContent = '✓ You\'re on the list. We\'ll be in touch soon.';
-      success.classList.remove('hidden');
-      localStorage.setItem(SUBMITTED_KEY, '1');
-      btn.disabled = true; // lock after success
     });
   </script>
 </body>
