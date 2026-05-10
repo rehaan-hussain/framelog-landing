@@ -33,5 +33,7 @@ fs.writeFileSync('dist/index.html', html);
 
 fs.copyFileSync('logo.svg', 'dist/logo.svg');
 fs.copyFileSync('google432a398d7170998a.html', 'dist/google432a398d7170998a.html');
+fs.copyFileSync('sitemap.xml', 'dist/sitemap.xml');
+fs.copyFileSync('robots.txt', 'dist/robots.txt');
 
 console.log('Build complete → dist/');

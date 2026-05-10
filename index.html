@@ -3,7 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Framelog — Job Photos, Organized by Job</title>
+  <title>Framelog — Job Site Photo App for Solo Contractors</title>
+  <meta name="description" content="Framelog is the contractor photo organizer built for solo tradespeople. Organize work photos by project, keep them off your camera roll, and document field work from any device. No team required." />
+  <meta name="keywords" content="contractor photo app, job site photos, work photo organizer, project photo tracker, CompanyCam alternative, WorkCam alternative, solo contractor app, separate work personal photos iPhone, keep work photos off camera roll, job photos app no team required, photo documentation app freelancer, best photo app for contractors, best photo app for plumbers, best photo app for electricians, best photo app for roofers, contractor, jobsite, tradesperson, documentation, fieldwork, projects, folders, cloud, web, selfemployed, workphotos, inspector, plumber, electrician, roofer" />
+
+  <!-- SoftwareApplication schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Framelog",
+    "url": "https://framelog.org",
+    "applicationCategory": "PhotographyApplication",
+    "operatingSystem": "iOS",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/ComingSoon"
+    },
+    "description": "Framelog is the job site photo app for solo contractors and tradespeople. Organise work photos by project, keep them off your personal camera roll, and document field work from any device. No team required.",
+    "keywords": "contractor photo app, job site photos, work photo organizer, project photo tracker, CompanyCam alternative, WorkCam alternative, solo contractor app, separate work personal photos iPhone, keep work photos off camera roll, job photos app no team required, photo documentation app freelancer, best photo app for contractors, best photo app for plumbers, best photo app for electricians, best photo app for roofers, contractor, jobsite, tradesperson, documentation, fieldwork, projects, folders, cloud, web, selfemployed, workphotos, inspector, plumber, electrician, roofer",
+    "creator": {
+      "@type": "Organization",
+      "name": "Framelog",
+      "url": "https://framelog.org"
+    },
+    "featureList": [
+      "Organise photos by job or project",
+      "Private in-app camera — photos never touch your camera roll",
+      "Nested folders within projects",
+      "Single user pricing — no team required",
+      "Field photo documentation for contractors and tradespeople",
+      "Separate work and personal photos on iPhone"
+    ],
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Solo contractors, tradespeople, plumbers, electricians, roofers, inspectors, freelancers, field workers"
+    }
+  }
+  </script>
+  <meta property="og:title" content="Framelog — Job Site Photo App for Solo Contractors" />
+  <meta property="og:description" content="Keep job site photos organized by project and off your personal camera roll. Built for solo contractors, tradespeople, and field workers. Coming to iOS." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Framelog — Job Site Photo App for Solo Contractors" />
+  <meta name="twitter:description" content="The work photo organizer app built for solo tradespeople. Organize by project. No team required." />
+
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "woxtp0s15n");
+  </script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMY9E20EM4"></script>
@@ -101,6 +157,10 @@
     .card-lift:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.09); }
 
     /* ── Ticker ── */
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
     .ticker-wrap  { overflow: hidden; white-space: nowrap; }
     .ticker-inner { display: inline-flex; animation: ticker 24s linear infinite; }
     .ticker-inner:hover { animation-play-state: paused; }
@@ -198,7 +258,7 @@
         <div class="reveal mb-7">
           <span class="inline-flex items-center gap-2 text-xs font-semibold text-muted border border-border bg-paper px-3 py-1.5 rounded-full">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse2 inline-block"></span>
-            iOS app · launching soon
+            Project photo app for iOS · launching soon
           </span>
         </div>
 
@@ -208,9 +268,9 @@
         </h1>
 
         <p class="reveal text-lg text-muted leading-relaxed mb-10" style="transition-delay:160ms">
-          Stop digging through your camera roll. Framelog keeps every project's
-          photos separate — automatically. No albums. No manual sorting.
-          Just tap a job, see its photos.
+          The job site photo app built for solo contractors and tradespeople.
+          Keep work photos organized by project and off your personal camera roll — automatically.
+          No albums. No manual sorting. Just tap a job, see its photos.
         </p>
 
         <div class="reveal flex flex-col sm:flex-row gap-3" style="transition-delay:240ms">
@@ -308,30 +368,38 @@
   <div class="border-y border-border bg-paper py-4">
     <div class="ticker-wrap">
       <div class="ticker-inner select-none">
-        <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
+        <span class="text-sm font-semibold text-muted px-8">Job site photo app</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
+        <span class="text-sm font-semibold text-muted px-8">Contractor photo organizer</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
+        <span class="text-sm font-semibold text-muted px-8">Organize photos by project</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
+        <span class="text-sm font-semibold text-muted px-8">Private work camera app</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
+        <span class="text-sm font-semibold text-muted px-8">No camera roll spillover</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">One user, unlimited jobs</span>
+        <span class="text-sm font-semibold text-muted px-8">Solo contractor app</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Field photo documentation</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Single user, unlimited jobs</span>
         <span class="text-accent px-3 font-bold">·</span>
         <!-- duplicate for seamless loop -->
-        <span class="text-sm font-semibold text-muted px-8">Job photos, organized by job</span>
+        <span class="text-sm font-semibold text-muted px-8">Job site photo app</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">No manual sorting</span>
+        <span class="text-sm font-semibold text-muted px-8">Contractor photo organizer</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Built for solo pros</span>
+        <span class="text-sm font-semibold text-muted px-8">Organize photos by project</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">In-app camera</span>
+        <span class="text-sm font-semibold text-muted px-8">Private work camera app</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">Coming soon to iOS</span>
+        <span class="text-sm font-semibold text-muted px-8">No camera roll spillover</span>
         <span class="text-accent px-3 font-bold">·</span>
-        <span class="text-sm font-semibold text-muted px-8">One user, unlimited jobs</span>
+        <span class="text-sm font-semibold text-muted px-8">Solo contractor app</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Field photo documentation</span>
+        <span class="text-accent px-3 font-bold">·</span>
+        <span class="text-sm font-semibold text-muted px-8">Single user, unlimited jobs</span>
         <span class="text-accent px-3 font-bold">·</span>
       </div>
     </div>
@@ -346,22 +414,22 @@
         <span class="text-muted">And you know it.</span>
       </h2>
       <p class="reveal text-lg text-muted leading-relaxed" style="transition-delay:160ms">
-        You've got 3,000 photos. Some are jobs. Some are personal. Some are both.
-        When a client asks for proof of work, you're scrolling back three weeks
-        hoping you remember which ones were theirs.
+        You have got 3,000 photos on your iPhone. Some are job site documentation. Some are personal. Some are both.
+        When a client asks for proof of work, you are scrolling back three weeks trying to remember
+        which contractor photos were theirs.
       </p>
     </div>
 
     <div class="stagger grid sm:grid-cols-3 gap-4 mt-16">
       <div class="card-lift bg-paper border border-border rounded-3xl p-7">
         <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">📱</div>
-        <p class="font-semibold text-ink mb-2">Camera roll chaos</p>
-        <p class="text-muted text-sm leading-relaxed">Work and personal photos mixed together with no separation.</p>
+        <p class="font-semibold text-ink mb-2">Work photos buried in camera roll</p>
+        <p class="text-muted text-sm leading-relaxed">Job site photos and personal photos mixed together with no way to separate them.</p>
       </div>
       <div class="card-lift bg-paper border border-border rounded-3xl p-7">
         <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">🔍</div>
-        <p class="font-semibold text-ink mb-2">No job grouping</p>
-        <p class="text-muted text-sm leading-relaxed">No way to group photos by client or project — only by date.</p>
+        <p class="font-semibold text-ink mb-2">No project organisation</p>
+        <p class="text-muted text-sm leading-relaxed">No way to organise contractor photos by job or client. Only sorted by date.</p>
       </div>
       <div class="card-lift bg-paper border border-border rounded-3xl p-7">
         <div class="w-10 h-10 rounded-xl bg-soft flex items-center justify-center text-xl mb-5">👁</div>
@@ -377,8 +445,8 @@
       <div class="max-w-2xl mb-16">
         <p class="reveal text-xs font-semibold text-muted uppercase tracking-widest mb-5">The fix</p>
         <h2 class="reveal text-5xl sm:text-6xl font-black leading-tight tracking-tight" style="transition-delay:80ms">
-          Framelog keeps work photos
-          <span class="text-accent"> where they belong — in the job.</span>
+          The work photo organizer app that keeps every job
+          <span class="text-accent"> in its own private space.</span>
         </h2>
       </div>
 
@@ -386,14 +454,14 @@
       <div class="stagger grid sm:grid-cols-2 gap-5">
         <div class="card-lift border border-border rounded-3xl p-10">
           <div class="text-5xl mb-7">📁</div>
-          <h3 class="text-2xl font-bold mb-4 tracking-tight">Open a job, see its photos</h3>
-          <p class="text-muted leading-relaxed">Every project has its own space. Nothing spills over.</p>
+          <h3 class="text-2xl font-bold mb-4 tracking-tight">Organise photos by project</h3>
+          <p class="text-muted leading-relaxed">Every job site gets its own space for field photo documentation. Nothing spills over.</p>
         </div>
 
         <div class="card-lift border-2 border-ink rounded-3xl p-10 bg-ink text-paper">
           <div class="text-5xl mb-7">📷</div>
-          <h3 class="text-2xl font-bold mb-4 tracking-tight">In-app camera</h3>
-          <p class="text-paper/50 leading-relaxed">Photos taken inside a job stay inside that job. Never touches your camera roll.</p>
+          <h3 class="text-2xl font-bold mb-4 tracking-tight">Private work camera</h3>
+          <p class="text-paper/50 leading-relaxed">Photos taken on the job stay in that job. Never touches your personal camera roll.</p>
         </div>
       </div>
     </div>
@@ -411,7 +479,7 @@
           <span class="text-accent">Framelog doesn't.</span>
         </h2>
         <p class="reveal text-white/45 text-lg leading-relaxed" style="transition-delay:160ms">
-          CompanyCam bills you for three seats whether you use them or not. WorkCam leaves you on one device with no web access. Framelog is the only option built and priced for how solo professionals actually work.
+          Framelog is the only field photo documentation app built and priced for how solo contractors and tradespeople actually work. One user. One plan. Unlimited jobs.
         </p>
       </div>
 
@@ -441,19 +509,19 @@
                 </div>
               </th>
 
-              <!-- WorkCam -->
+              <!-- Competitor A -->
               <th class="pb-5 px-4 w-[21%]">
                 <div class="border border-white/15 rounded-2xl px-4 py-3 text-center">
-                  <p class="text-white font-black text-base" style="font-family:'Space Grotesk',sans-serif">WorkCam</p>
-                  <p class="text-white/35 text-[10px] font-semibold uppercase tracking-widest mt-0.5">Mobile only</p>
+                  <p class="text-white font-black text-base" style="font-family:'Space Grotesk',sans-serif">Mobile Only</p>
+                  <p class="text-white/35 text-[10px] font-semibold uppercase tracking-widest mt-0.5">No web app</p>
                 </div>
               </th>
 
-              <!-- CompanyCam -->
+              <!-- Competitor B -->
               <th class="pb-5 px-4 w-[22%]">
                 <div class="border border-white/15 rounded-2xl px-4 py-3 text-center">
-                  <p class="text-white font-black text-base" style="font-family:'Space Grotesk',sans-serif">CompanyCam</p>
-                  <p class="text-white/35 text-[10px] font-semibold uppercase tracking-widest mt-0.5">Team pricing</p>
+                  <p class="text-white font-black text-base" style="font-family:'Space Grotesk',sans-serif">Team Priced</p>
+                  <p class="text-white/35 text-[10px] font-semibold uppercase tracking-widest mt-0.5">3 seat minimum</p>
                 </div>
               </th>
             </tr>
@@ -562,8 +630,8 @@
         Be first to know<br />when we launch.
       </h2>
       <p class="reveal text-paper/50 text-lg leading-relaxed mb-12" style="transition-delay:160ms">
-        No pricing. No tiers. One plan, one user, unlimited jobs.<br />
-        We'll email you the moment Framelog hits the App Store.
+        The solo contractor app with no team pricing and no seat minimums. One plan, one user, unlimited jobs.<br />
+        We will email you the moment Framelog hits the App Store.
       </p>
 
       <form class="reveal" style="transition-delay:240ms" id="waitlist-form" novalidate>
