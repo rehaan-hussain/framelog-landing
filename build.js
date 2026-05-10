@@ -32,5 +32,6 @@ html = html.replace(/__SUPABASE_ANON_KEY__/g, key);
 fs.writeFileSync('dist/index.html', html);
 
 fs.copyFileSync('logo.svg', 'dist/logo.svg');
+fs.copyFileSync('google432a398d7170998a.html', 'dist/google432a398d7170998a.html');
 
 console.log('Build complete → dist/');
